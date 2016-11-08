@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/user/cocos2d-x-3.10/projects/cermer3dTest/cocos2d/cocos/platform/android/libcocos2dx/src/main/assets"/></dataSet><dataSet config="release"><source path="/Users/user/cocos2d-x-3.10/projects/cermer3dTest/cocos2d/cocos/platform/android/libcocos2dx/src/release/assets"/></dataSet></merger>

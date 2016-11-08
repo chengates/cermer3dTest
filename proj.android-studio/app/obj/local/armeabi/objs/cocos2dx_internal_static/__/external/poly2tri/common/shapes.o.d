@@ -1,0 +1,29 @@
+obj/local/armeabi/objs/cocos2dx_internal_static/__/external/poly2tri/common/shapes.o: \
+ /Users/user/cocos2d-x-3.10/projects/cermer3dTest/proj.android-studio/../cocos2d/cocos/./../external/poly2tri/common/shapes.cc \
+ /Users/user/cocos2d-x-3.10/projects/cermer3dTest/proj.android-studio/../cocos2d/cocos/./../external/poly2tri/common/shapes.h \
+ /Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/vector \
+ /Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/cstddef \
+ /Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/assert.h \
+ /Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/cdefs.h \
+ /Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/cdefs_elf.h \
+ /Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/api-level.h \
+ /Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/cmath \
+ /Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/iostream
+
+/Users/user/cocos2d-x-3.10/projects/cermer3dTest/proj.android-studio/../cocos2d/cocos/./../external/poly2tri/common/shapes.h:
+
+/Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/vector:
+
+/Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/cstddef:
+
+/Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/assert.h:
+
+/Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/cdefs.h:
+
+/Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/cdefs_elf.h:
+
+/Users/user/android/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/api-level.h:
+
+/Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/cmath:
+
+/Users/user/android/android-ndk-r10e/sources/cxx-stl/gnu-libstdc++/4.9/include/iostream:
