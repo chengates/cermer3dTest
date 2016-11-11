@@ -14,6 +14,7 @@
 
 USING_NS_CC;
 //
+int GROUND_3D_SIZE = 22;
 //------------------------------------------------------------------
 //
 // Camera Rotation Test
@@ -357,25 +358,26 @@ void Camera3DTestDemo::onEnter()
     }
     SwitchViewCallback(this,CameraType::ThirdPerson);
     DrawNode3D* line =DrawNode3D::create();
+
     //draw x
-    auto yx = Vec3(-150, 0, 5*-30);
-    auto yz = Vec3(150, 0, 5*-30);
-    for( int j =-30; j<=30 ;j++)//for( int j =-20; j<=20 ;j++)
+    auto yx = Vec3(-5*GROUND_3D_SIZE, 0, 5*-GROUND_3D_SIZE);
+    auto yz = Vec3(5*GROUND_3D_SIZE, 0, 5*-GROUND_3D_SIZE);
+    for( int j =-GROUND_3D_SIZE; j<=GROUND_3D_SIZE ;j++)//for( int j =-20; j<=20 ;j++)
     {
         //line->drawLine(Vec3(-100, 0, 5*j),Vec3(100,0,5*j),Color4F(1,0,0,1));
         line->drawLine(yx,yz,Color4F::ORANGE);
-        yx = Vec3(-150, 0, 5*j);
-        yz = Vec3(150, 0, 5*j);
+        yx = Vec3(-5*GROUND_3D_SIZE, 0, 5*j);
+        yz = Vec3(5*GROUND_3D_SIZE, 0, 5*j);
     }
-    //draw z
-    auto zx = Vec3(5*-30, 0, -150);
-    auto zz = Vec3(5*-30,0,150);
-    for( int j =-30; j<=30 ;j++)//for( int j =-20; j<=20 ;j++)
-    {
+    //draw z劃縱線
+    auto zx = Vec3(5*-GROUND_3D_SIZE, 0, -5*GROUND_3D_SIZE);
+    auto zz = Vec3(5*-GROUND_3D_SIZE,0,5*GROUND_3D_SIZE);
+    for( int j =-GROUND_3D_SIZE; j<=GROUND_3D_SIZE ;j++)//for( int j =-20; j<=20 ;j++)
+    {//有左到右劃縱線
         //line->drawLine(Vec3(5*j, 0, -100),Vec3(5*j,0,100),Color4F(0,0,1,1));
         line->drawLine(zx,zz,Color4F::MAGENTA);
-        zx = Vec3(5*j, 0, -150);
-        zz = Vec3(5*j,0,150);
+        zx = Vec3(5*j, 0, -5*GROUND_3D_SIZE);
+        zz = Vec3(5*j,0,5*GROUND_3D_SIZE);
     }
     //draw y 中心垂直線
     line->drawLine(Vec3(0, -50, 0),Vec3(0,0,0),Color4F(0,0.5,0,1));
@@ -472,7 +474,7 @@ void Camera3DTestDemo::move3D(float elapsedTime)
         Vec3 newFaceDir = _targetPos - curPos;
         newFaceDir.y = 0.0f;
         newFaceDir.normalize();
-        Vec3 offset = newFaceDir * 25.0f * elapsedTime;
+        Vec3 offset = newFaceDir * 10.0f * elapsedTime;//25.0f
         curPos+=offset;
         _sprite3D->setPosition3D(curPos);
         if(_cameraType==CameraType::ThirdPerson)
@@ -494,14 +496,68 @@ void Camera3DTestDemo::updateState(float elapsedTime)
         curFaceDir=-curFaceDir;
         curFaceDir.normalize();
         Vec3 newFaceDir = _targetPos - curPos;
-        newFaceDir.y = 0.0f;
+        newFaceDir.y = 0.0f;//z==1 面向前, z == -1 面向後,x=1往右,x=-1面朝左
         newFaceDir.normalize();
         float cosAngle = std::fabs(Vec3::dot(curFaceDir,newFaceDir) - 1.0f);
+        
+        //面向前往前_targetPos.ｚ值越大,面向後往後_targetPos.ｚ負值越大,中心點_targetPos.ｚ=0
         float dist = curPos.distanceSquared(_targetPos);
+        
+        //zz z方向的目的地,往前時Z值增加
+        static Vec3  zz;
+        if(_targetPos.z >= (GROUND_3D_SIZE+addFromLine) && newFaceDir.z > 0)
+        {
+            log("pois is going Margin");
+            DrawNode3D* line =DrawNode3D::create();
+            
+            addFromLine += 5;
+            //draw x
+            auto yz = Vec3(5*GROUND_3D_SIZE, 0, 5*(GROUND_3D_SIZE+addGap));
+            auto yx = Vec3(-5*GROUND_3D_SIZE, 0, 5*(GROUND_3D_SIZE+addGap));
+            line->drawLine(yx,yz,Color4F::ORANGE);
+            log("pois is going Margin ,\nxline(%f,%f,%f)-(%f,%f,%f)",
+                yx.x, yx.y, yx.z,
+                yz.x ,yz.y, yz.z);
+            
+            //draw z
+            auto zx = yx;
+            
+            for( int j =-GROUND_3D_SIZE; j<GROUND_3D_SIZE ;j++)
+            {
+                zx = Vec3(5*j,0,(4+addGap)*(GROUND_3D_SIZE));
+                zz = Vec3(5*j,0,(5+addGap)*(GROUND_3D_SIZE));
+                line->drawLine(zx,zz,Color4F::MAGENTA);
+                log("\nzLine(%f.1,%f.1,%f.1)-(%f.1,%f.1,%f.1)",
+                    zx.x ,zx.y ,zx.z,
+                    zz.x ,zz.y ,zz.z);
+            }
+            addGap++;
+
+            _layer3D->addChild(line);
+            _layer3D->setCameraMask(2);
+        }
+        //
+
         if(dist<=4.0f)
         {
             if(cosAngle<=0.01f)
-                _curState = State_Idle;
+            {
+                Vec3 zNext = curPos + Vec3(0,0,4.0);
+                //auto set next move
+                    auto location = zNext;
+                    if(_camera)
+                    {
+                        if(_sprite3D && _cameraType==CameraType::ThirdPerson && _bZoomOut == false && _bZoomIn == false && _bRotateLeft == false && _bRotateRight == false)
+                        {
+                            Vec2 posi = Vec2(0,zz.z+5);
+                            setTargetPos(posi);
+                        }
+                    }
+                if(zz.z > 99999)
+                    zz.z = 0;
+                //auto set next move <= 從移動到觸控點 State_Idle改良
+                //_curState = State_Idle;
+            }
             else
                 _curState = State_Rotate;
         }
@@ -514,6 +570,36 @@ void Camera3DTestDemo::updateState(float elapsedTime)
         }
     }
 }
+
+//location is touch->getLocationInView();_targetPos為最終人物將要走到的目的地
+void Camera3DTestDemo::setTargetPos(cocos2d::Vec2& location)
+{
+    Vec3 nearP(location.x, location.y, -1.0f), farP(location.x, location.y, 1.0f);
+    
+    auto size = Director::getInstance()->getWinSize();
+    nearP = _camera->unproject(nearP);
+    farP = _camera->unproject(farP);
+    Vec3 dir(farP - nearP);
+    float dist=0.0f;
+    float ndd = Vec3::dot(Vec3(0,1,0),dir);
+    if(ndd == 0)
+        dist=0.0f;
+    float ndo = Vec3::dot(Vec3(0,1,0),nearP);
+    dist= (0 - ndo) / ndd;
+    Vec3 p =   nearP + dist *  dir;
+    
+    if( p.x > 100)
+        p.x = 100;
+    if( p.x < -100)
+        p.x = -100;
+    //                if( p.z > 100)//這兩行為往前移動的上限值
+    //                    p.z = 100;
+    if( p.z < -100)
+        p.z = -100;
+    
+    _targetPos=p;
+}
+
 void Camera3DTestDemo::onTouchesEnded(const std::vector<Touch*>& touches, cocos2d::Event  *event)
 {
     for ( auto &item: touches )
@@ -524,34 +610,12 @@ void Camera3DTestDemo::onTouchesEnded(const std::vector<Touch*>& touches, cocos2
         {
             if(_sprite3D && _cameraType==CameraType::ThirdPerson && _bZoomOut == false && _bZoomIn == false && _bRotateLeft == false && _bRotateRight == false)
             {
-                Vec3 nearP(location.x, location.y, -1.0f), farP(location.x, location.y, 1.0f);
-                
-                auto size = Director::getInstance()->getWinSize();
-                nearP = _camera->unproject(nearP);
-                farP = _camera->unproject(farP);
-                Vec3 dir(farP - nearP);
-                float dist=0.0f;
-                float ndd = Vec3::dot(Vec3(0,1,0),dir);
-                if(ndd == 0)
-                    dist=0.0f;
-                float ndo = Vec3::dot(Vec3(0,1,0),nearP);
-                dist= (0 - ndo) / ndd;
-                Vec3 p =   nearP + dist *  dir;
-                
-                if( p.x > 100)
-                    p.x = 100;
-                if( p.x < -100)
-                    p.x = -100;
-                if( p.z > 100)
-                    p.z = 100;
-                if( p.z < -100)
-                    p.z = -100;
-                
-                _targetPos=p;
+                setTargetPos(location);
             }
         }
     }
 }
+
 void onTouchesCancelled(const std::vector<Touch*>& touches, cocos2d::Event  *event)
 {
 }

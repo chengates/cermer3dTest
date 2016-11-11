@@ -84,6 +84,13 @@ protected:
     cocos2d::EventListenerTouchOneByOne* _lis;
 };
 
+
+
+// 设置委托的语法是:
+//A a;
+//a.setFunction( MakeDelegate(&someClass, &someMember) ); // 成员函数或
+//a.setFunction( &somefreefunction ); // 静态函数
+
 class Camera3DTestDemo : public CameraBaseTest
 {
 public:
@@ -123,6 +130,8 @@ public:
     
     void menu1Callback(cocos2d::Ref* pSender);
 protected:
+    void setTargetPos(cocos2d::Vec2& v);
+    
     std::string    _title;
     cocos2d::Layer*         _layer3D;
     cocos2d::Sprite3D*      _sprite3D;
@@ -141,6 +150,9 @@ protected:
     cocos2d::Label* _RotateLeftlabel;
     cocos2d::Label* _ZoomInlabel;
     cocos2d::Label* _ZoomOutlabel;
+    
+    int addFromLine = 0;
+    int addGap=0;
 };
 
 
